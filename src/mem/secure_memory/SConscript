@@ -46,8 +46,10 @@ SimObject("SecureMemory.py", sim_objects=[
     "DirectEncryption",
     "CounterModeEncryption",
     "MAC",
+    "IntegrityTree",
 ])
 
 Source("direct_encryption.cc")
 Source("counter_mode_encryption.cc")
 Source("mac.cc")
+Source("integrity_tree.cc")

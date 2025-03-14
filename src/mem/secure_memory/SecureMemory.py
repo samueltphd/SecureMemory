@@ -111,3 +111,44 @@ class MAC(SimObject):
     # use cache?
     cache = Param.Bool(True, "Use the metadata cache?")
     cache_mac = Param.Bool(False, "Store HMACs in metadata cache?")
+
+
+class IntegrityTree(SimObject):
+    type = "IntegrityTree"
+    cxx_header = "mem/secure_memory/integrity_tree.hh"
+    cxx_class = "gem5::memory::IntegrityTree"
+
+    # declare ports
+    cpu_side = ResponsePort("CPU side port, receives requests from LLC")
+    mem_side = RequestPort("Mem side port, sends requests for data")
+    metadata_request_port = RequestPort(
+        "Sends requests to the \
+            metadata cache for metadata"
+    )
+    metadata_response_port = ResponsePort(
+        "Sends metadata responses \
+            from memory to the metadata cache"
+    )
+
+    # latency is configurable
+    latency = Param.UInt64(53, "Encryption latency")
+    hash_latency = Param.UInt64(2, "Hashing latency")
+
+    # arity is configurable
+    tree_arity = Param.UInt64(8, "Tree arity")
+    counter_arity = Param.UInt64(64, "Counter arity")
+    mac_arity = Param.UInt64(8, "MAC arity")
+
+    # use cache?
+    cache = Param.Bool(True, "Use the metadata cache?")
+    cache_mac = Param.Bool(False, "Store HMACs in metadata cache?")
+
+    # when to fetch parent
+    eager_fetch = Param.Bool(
+        True,
+        "Should parent nodes be fetched as \
+            soon as a miss is detected?",
+    )
+
+    # what do we protect?
+    bonsai = Param.Bool(True, "BMT or standard merkle tree")
