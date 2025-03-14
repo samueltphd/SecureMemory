@@ -45,7 +45,9 @@ Import('*')
 SimObject("SecureMemory.py", sim_objects=[
     "DirectEncryption",
     "CounterModeEncryption",
+    "MAC",
 ])
 
 Source("direct_encryption.cc")
 Source("counter_mode_encryption.cc")
+Source("mac.cc")

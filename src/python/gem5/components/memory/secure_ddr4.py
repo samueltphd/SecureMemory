@@ -49,6 +49,7 @@ from typing import (
 )
 
 from m5.objects import (
+    MAC,
     AddrRange,
     CounterModeEncryption,
     DirectEncryption,
@@ -94,10 +95,14 @@ class SecureDDR4(AbstractMemorySystem):
         if secure_memory_class == DirectEncryption:
             self.secure_memory = DirectEncryption(latency=latency)
         else:
-            assert secure_memory_class == CounterModeEncryption
-            self.secure_memory = CounterModeEncryption(
-                latency=latency, arity=arity
-            )
+            if secure_memory_class == CounterModeEncryption:
+                self.secure_memory = CounterModeEncryption(
+                    latency=latency, arity=arity
+                )
+            elif secure_memory_class == MAC:
+                self.secure_memory = MAC(
+                    latency=latency, counter_arity=arity, cache_mac=ch
+                )
 
             self.metadata_cache = L1DCache(size=cache_size)
             self.secure_memory.metadata_request_port = (
@@ -157,4 +162,24 @@ def CounterModeEncryptedMemory(
         arity=arity,
         cache=cache,
         cache_size=cache_size,
+    )
+
+
+def MACProtectedMemory(
+    size: Optional[str] = "32MB",
+    latency: Optional[int] = 53,
+    arity: Optional[int] = 64,
+    cache: Optional[bool] = True,
+    cache_size: Optional[str] = "64KiB",
+    cache_mac: Optional[bool] = False,
+) -> AbstractMemorySystem:
+    # arity describes counter arity (number of data blocks per counter block)
+    return SecureDDR4(
+        MAC,
+        size=size,
+        latency=latency,
+        arity=arity,
+        cache=cache,
+        cache_size=cache_size,
+        ch=cache_mac,
     )

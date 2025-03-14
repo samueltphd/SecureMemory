@@ -81,3 +81,33 @@ class CounterModeEncryption(SimObject):
 
     # use cache?
     cache = Param.Bool(True, "Use the metadata cache?")
+
+
+class MAC(SimObject):
+    type = "MAC"
+    cxx_header = "mem/secure_memory/mac.hh"
+    cxx_class = "gem5::memory::MAC"
+
+    # declare ports
+    cpu_side = ResponsePort("CPU side port, receives requests from LLC")
+    mem_side = RequestPort("Mem side port, sends requests for data")
+    metadata_request_port = RequestPort(
+        "Sends requests to the \
+            metadata cache for metadata"
+    )
+    metadata_response_port = ResponsePort(
+        "Sends metadata responses \
+            from memory to the metadata cache"
+    )
+
+    # latency is configurable
+    latency = Param.UInt64(53, "Encryption latency")
+    hash_latency = Param.UInt64(2, "Hashing latency")
+
+    # arity is configurable
+    counter_arity = Param.UInt64(64, "Counter arity")
+    mac_arity = Param.UInt64(8, "MAC arity")
+
+    # use cache?
+    cache = Param.Bool(True, "Use the metadata cache?")
+    cache_mac = Param.Bool(False, "Store HMACs in metadata cache?")
