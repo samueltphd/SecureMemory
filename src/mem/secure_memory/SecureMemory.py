@@ -54,3 +54,30 @@ class DirectEncryption(SimObject):
 
     # latency is configurable
     latency = Param.UInt64(53, "Encryption latency")
+
+
+class CounterModeEncryption(SimObject):
+    type = "CounterModeEncryption"
+    cxx_header = "mem/secure_memory/counter_mode_encryption.hh"
+    cxx_class = "gem5::memory::CounterModeEncryption"
+
+    # declare ports
+    cpu_side = ResponsePort("CPU side port, receives requests from LLC")
+    mem_side = RequestPort("Mem side port, sends requests for data")
+    metadata_request_port = RequestPort(
+        "Sends requests to the \
+            metadata cache for metadata"
+    )
+    metadata_response_port = ResponsePort(
+        "Sends metadata responses \
+            from memory to the metadata cache"
+    )
+
+    # latency is configurable
+    latency = Param.UInt64(53, "Encryption latency")
+
+    # arity is configurable
+    arity = Param.UInt64(64, "Counter arity")
+
+    # use cache?
+    cache = Param.Bool(True, "Use the metadata cache?")
