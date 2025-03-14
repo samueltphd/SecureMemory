@@ -422,9 +422,6 @@ MemCtrl::recvTimingReq(PacketPtr pkt)
     }
     prevArrival = curTick();
 
-    panic_if(!(dram->getAddrRange().contains(pkt->getAddr())),
-             "Can't handle address range for packet %s\n", pkt->print());
-
     // Find out how many memory packets a pkt translates to
     // If the burst size is equal or larger than the pkt size, then a pkt
     // translates to only one memory packet. Otherwise, a pkt translates to
@@ -627,8 +624,6 @@ MemCtrl::accessAndRespond(PacketPtr pkt, Tick static_latency,
     bool needsResponse = pkt->needsResponse();
     // do the actual memory access which also turns the packet into a
     // response
-    panic_if(!mem_intr->getAddrRange().contains(pkt->getAddr()),
-             "Can't handle address range for packet %s\n", pkt->print());
     mem_intr->access(pkt);
 
     // turn packet around to go back to requestor if response expected

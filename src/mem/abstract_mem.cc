@@ -69,6 +69,9 @@ AbstractMemory::AbstractMemory(const Params &p) :
     panic_if(!range.valid() || !range.size(),
              "Memory range %s must be valid with non-zero size.",
              range.to_string());
+
+    // for secure memory :-)
+    security_metadata = (uint8_t *) malloc(sizeof(uint8_t) * 64);
 }
 
 void
@@ -391,9 +394,12 @@ AbstractMemory::access(PacketPtr pkt)
       return;
     }
 
-    assert(pkt->getAddrRange().isSubset(range));
-
-    uint8_t *host_addr = toHostAddr(pkt->getAddr());
+    uint8_t *host_addr;
+    if (pkt->getAddrRange().isSubset(range)) {
+        host_addr = toHostAddr(pkt->getAddr());
+    } else {
+        host_addr = security_metadata;
+    }
 
     if (pkt->cmd == MemCmd::SwapReq) {
         if (pkt->isAtomicOp()) {
